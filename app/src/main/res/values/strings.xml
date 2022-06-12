@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CookLab</string>
+    <string name="recipeName">recipeName</string>
+    <string name="ingredients">ingredients</string>
 </resources>
