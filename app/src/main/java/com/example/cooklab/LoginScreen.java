@@ -58,7 +58,7 @@ public class LoginScreen extends AppCompatActivity {
                         Toast.makeText(LoginScreen.this,"Invalid name or password!",Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Intent intent=new Intent(LoginScreen.this,IngredientScreen.class);
+                        Intent intent=new Intent(LoginScreen.this,DropDownActivity.class);
                         startActivity(intent);
                     }
                 }

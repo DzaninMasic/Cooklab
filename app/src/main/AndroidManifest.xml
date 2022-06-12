@@ -23,8 +23,18 @@
             android:exported="false" />
 
         <activity
-            android:name=".IngredientScreen"
+            android:name=".DropDownActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".RecipeList"
+            android:exported="false" />
+
+        <activity
+            android:name=".RecipeActivity"
+            android:exported="false" />
+
+
         <activity
             android:name=".RegisterScreen"
             android:exported="false" />

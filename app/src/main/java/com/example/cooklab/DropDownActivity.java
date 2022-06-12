@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ public class DropDownActivity extends AppCompatActivity {
     ArrayList<Integer> IngredientList = new ArrayList<>();
     String[] ingredientArray = {"Flour 1kg","Flour 5kg","Oil 1l","Oil 2l","10 eggs","25 eggs"};
     ArrayList<String> allSelectedIngredients = new ArrayList<String>();
+    ArrayList<Boolean> selectedPositions = new ArrayList<>();
     public Button button;
     private Button grocery;
 
@@ -30,7 +33,7 @@ public class DropDownActivity extends AppCompatActivity {
         setContentView(R.layout.dropdown);
 
 
-        tvIngredients=findViewById(R.id.tv_ingredients);
+        tvIngredients = findViewById(R.id.tv_ingredients);
         grocery=findViewById(R.id.grocerystore);
         grocery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,13 +55,18 @@ public class DropDownActivity extends AppCompatActivity {
 
                 builder.setMultiChoiceItems(ingredientArray, selectedIngredients, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                        if (b)
+                    public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+                        if (isChecked)
                         {
-                            IngredientList.add(i);
+                            IngredientList.add(position);
                             Collections.sort(IngredientList);
+                            // Memorized selected ingredients.
+                            allSelectedIngredients.add(ingredientArray[position]);
                         }else {
-                            IngredientList.remove(i);
+                            IngredientList.remove(position);
+                            if (allSelectedIngredients.contains(ingredientArray[position])) {
+                                allSelectedIngredients.remove(ingredientArray[position]);
+                            }
                         }
                     }
                 });
@@ -67,18 +75,17 @@ public class DropDownActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         StringBuilder stringBuilder= new StringBuilder();
+
                         for(int j=0;j<IngredientList.size();j++)
                         {
                             stringBuilder.append(ingredientArray[IngredientList.get(j)]);
-
-                            // Memorized selected ingredients.
-                            allSelectedIngredients.add(ingredientArray[IngredientList.get(j)]);
 
                             if(j != IngredientList.size()-1)
                             {
                                 stringBuilder.append(", ");
                             }
                         }
+                        Log.i("TAG", "onClick: " + tvIngredients);
                         tvIngredients.setText(stringBuilder.toString());
                     }
                 });

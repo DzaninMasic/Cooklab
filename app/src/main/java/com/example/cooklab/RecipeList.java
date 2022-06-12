@@ -1,7 +1,12 @@
 package com.example.cooklab;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +17,7 @@ import java.util.List;
 
 public class RecipeList extends AppCompatActivity {
 
+    private static final String CHANNEL_ID = "My notification";
     RecyclerView myrecyclerView;
     RecyclerViewAdapter myAdapter;
 
@@ -25,10 +31,27 @@ public class RecipeList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipelist);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Dzanin";
+            String description = "Channel for notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         ArrayList<String> selectedIngredients = getIntent().getExtras().getStringArrayList("selectedIngredients");
+        Log.i("TAG", "onCreate: " + selectedIngredients);
 
         ArrayList<String> ingredients1 = new ArrayList<>();
-        ingredients1.add("Sastojak 1");
+        ingredients1.add("Flour 1kg");
+
+        ArrayList<String> ingredients2 = new ArrayList<>();
+        ingredients2.add("Flour 1kg");
+        ingredients2.add("Flour 5kg");
 
         recipes1 = new ArrayList<>();
         recipes1.add(new Recipes("Chicken Roll",
@@ -37,16 +60,7 @@ public class RecipeList extends AppCompatActivity {
                 "Chicken Roll is a delectable North Indian recipe made using all purpose flour, stir-fried chicken, yoghurt and a variety of vegetables rolled into paranthas. On days you do not want to prepare an elaborate meal, this delectable dish can be a saviour. Rolls are quite popular across India and they are often a favourite evening snack. Egg Roll, Kathi Kebab Roll, Mutton Roll, Paneer Roll, Potato Roll and even Fish Roll are among its many variations. This easy roll recipe is made using chicken and has the unforgettable aroma of Indian spices. You can also utilize your leftover parathas and chapatis in making this recipe. If you do not like to use all-purpose flour or maida, you can make it with whole wheat flour too. In fact, it can be made even with leftover chicken. All you have to ensure is that you use the right amount of spices so that the flavour is not lost. Easy to pack and carry, you can also take it to office or prepare it for picnics and day trips. A must try roll recipe for all chicken lovers!\n",R.drawable.chicken_roll));
 
         recipes1.add(new Recipes("Donut",
-                new ArrayList<String>(Arrays.asList(
-                new String[]{"1 c. whole milk" ,
-                "1/4 c. plus 1 tsp. granulated sugar, divided" ,
-                "1 packet (or 2 1/4 tsp.) active dry yeast " ,
-                "4 c. all-purpose flour, plus more if needed" ,
-                "1/2 tsp. kosher salt" ,
-                "6 tbsp. melted butter" ,
-                "2 large eggs" ,
-                "1/2 tsp. pure vanilla extract" ,
-                "Canola or vegetable oil, for frying"})),
+                ingredients2,
                         "Method",
                 "Grease a large bowl with cooking spray and set aside. In a small, microwave-safe bowl or glass measuring cup, add milk. Microwave until lukewarm, 40 seconds. Add a teaspoon of sugar and stir to dissolve, then sprinkle over yeast and let sit until frothy, about 8 minutes. Make glaze: In a large bowl, whisk together milk, powdered sugar, and vanilla until smooth. Set aside. Line a large baking sheet with paper towels. In a large dutch oven over medium heat, heat 2'' oil to 350°. Cook doughnuts, in batches, until deeply golden on both sides, about 1 minute per side. Holes will cook even faster! Transfer doughnuts to paper towel-lined baking sheet to drain and cool slightly. Dip into glaze, then place onto a cooling rack (or eat immediately!)",
                 R.drawable.donut1));
@@ -94,15 +108,17 @@ public class RecipeList extends AppCompatActivity {
 
         myrecyclerView = (RecyclerView)findViewById(R.id.recyclerView_id);
 
-        myAdapter = new RecyclerViewAdapter(this,recipes1, selectedIngredients);
+        myAdapter = new RecyclerViewAdapter(this,recipes1, selectedIngredients,CHANNEL_ID);
 
         myrecyclerView.setAdapter(myAdapter);
 
         myrecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-
-
     }
 
+    @Override
+    protected void onDestroy() {
+        myAdapter.clearItems();
+        super.onDestroy();
+    }
 }
